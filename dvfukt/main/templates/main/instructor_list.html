@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Преподаватели{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>👨‍🏫 Преподаватели</h1>
+        <a href="{% url 'instructor_create' %}" class="btn">+ Добавить преподавателя</a>
+    </div>
+
+    {% if instructors %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
+            {% for instructor in instructors %}
+            <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background: white;">
+                <h3 style="margin-top: 0;">{{ instructor.first_name }} {{ instructor.last_name }}</h3>
+                <p style="color: #6c757d; margin: 5px 0;">
+                    📧 {{ instructor.email }}
+                </p>
+                <p style="margin: 10px 0;">
+                    <strong>Специализация:</strong><br>
+                    {{ instructor.specialization }}
+                </p>
+                {% if instructor.degree %}
+                <p style="margin: 10px 0;">
+                    <strong>Ученая степень:</strong><br>
+                    {{ instructor.degree }}
+                </p>
+                {% endif %}
+                <p style="margin: 10px 0;">
+                    <strong>Статус:</strong>
+                    <span style="color: {% if instructor.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                        {{ instructor.is_active|yesno:"Активен,Не активен" }}
+                    </span>
+                </p>
+                <p style="margin: 10px 0;">
+                    <strong>Курсов:</strong> {{ instructor.courses.count }}
+                </p>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <a href="{% url 'instructor_detail' instructor.id %}"
+                       style="padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                        Подробнее
+                    </a>
+                    <a href="{% url 'instructor_edit' instructor.id %}"
+                       style="padding: 8px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                        Редактировать
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 20px; color: #6c757d;">
+            Всего преподавателей: {{ instructors|length }}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px;">
+            <p style="font-size: 1.2em;">Преподаватели не найдены</p>
+            <a href="{% url 'instructor_create' %}" class="btn" style="margin-top: 20px;">
+                Добавить первого преподавателя
+            </a>
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 40px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            ← На главную
+        </a>
+    </div>
+</div>
+{% endblock %}

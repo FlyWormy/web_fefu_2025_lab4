@@ -1,0 +1,127 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Редактирование студента{% else %}Добавление студента{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>
+        {% if form.instance.pk %}
+            ✏️ Редактирование студента
+        {% else %}
+            👨‍🎓 Добавление нового студента
+        {% endif %}
+    </h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">Имя</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+            <div class="error-list">
+                {% for error in form.first_name.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Фамилия</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <div class="error-list">
+                {% for error in form.last_name.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="error-list">
+                {% for error in form.email.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Дата рождения</label>
+            {{ form.date_of_birth }}
+            {% if form.date_of_birth.errors %}
+            <div class="error-list">
+                {% for error in form.date_of_birth.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Факультет</label>
+            {{ form.faculty }}
+            {% if form.faculty.errors %}
+            <div class="error-list">
+                {% for error in form.faculty.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="error-list" style="margin-bottom: 20px;">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button type="submit" class="btn">
+                {% if form.instance.pk %}Сохранить{% else %}Добавить{% endif %}
+            </button>
+            <a href="{% url 'student_list' %}" class="btn btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+</style>
+{% endblock %}

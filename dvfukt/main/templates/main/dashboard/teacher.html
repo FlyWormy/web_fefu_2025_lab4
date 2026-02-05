@@ -1,0 +1,134 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Панель преподавателя - FEFU Labs{% endblock %}
+
+{% block content %}
+<div style="max-width: 1400px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 30px;">
+        <h1>👨‍🏫 Панель преподавателя</h1>
+        <p style="font-size: 1.1em;">Добро пожаловать, {{ user.get_full_name }}!</p>
+        <p style="color: #6c757d;">Здесь вы можете управлять своими курсами и студентами</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 30px;">
+        <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h2>📊 Статистика по курсам</h2>
+            {% if course_stats %}
+            <div style="margin-top: 20px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Курс</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Студентов</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">С оценками</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Процент</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in course_stats %}
+                        <tr style="border-bottom: 1px solid #dee2e6;">
+                            <td style="padding: 12px 15px;">
+                                <a href="{% url 'course_detail' stat.course.id %}" style="color: #007bff; text-decoration: none; font-weight: bold;">
+                                    {{ stat.course.title }}
+                                </a>
+                            </td>
+                            <td style="padding: 12px 15px; text-align: center;">
+                                {{ stat.total_students }}
+                            </td>
+                            <td style="padding: 12px 15px; text-align: center;">
+                                {{ stat.has_grades }}
+                            </td>
+                            <td style="padding: 12px 15px; text-align: center;">
+                                {% if stat.total_students > 0 %}
+                                    {% widthratio stat.has_grades stat.total_students 100 %}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px 15px;">
+                                <a href="{% url 'manage_course_students' stat.course.id %}" class="btn" style="padding: 6px 12px; font-size: 0.9em;">
+                                    Управление
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                <p style="font-size: 1.2em; color: #6c757d; margin-bottom: 20px;">У вас пока нет курсов для преподавания</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h2>⚡ Быстрые действия</h2>
+            <div style="margin-top: 20px;">
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 15px;">
+                        <a href="{% url 'course_list' %}" class="btn" style="display: block; text-align: center;">
+                            📚 Все курсы
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <a href="{% url 'student_list' %}" class="btn" style="display: block; text-align: center;">
+                            👨‍🎓 Все студенты
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 15px;">
+                        <a href="{% url 'profile' %}" class="btn" style="display: block; text-align: center;">
+                            👤 Мой профиль
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li style="margin-bottom: 15px;">
+                        <a href="/admin/" class="btn" style="display: block; text-align: center;">
+                            ⚙️ Админка
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if courses %}
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 30px;">
+        <h2>🎯 Мои курсы</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            {% for course in courses %}
+            <div style="border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; background: #f8f9fa;">
+                <h3 style="margin-top: 0;">{{ course.title }}</h3>
+                <p style="color: #6c757d; font-size: 0.9em;">{{ course.description|truncatechars:100 }}</p>
+
+                <div style="margin-top: 15px;">
+                    <p><strong>Студентов:</strong> {{ course.enrollments.count }}</p>
+                    <p><strong>Статус:</strong>
+                        <span style="color: {% if course.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                            {{ course.is_active|yesno:"Активен,Не активен" }}
+                        </span>
+                    </p>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <a href="{% url 'course_detail' course.id %}" class="btn" style="padding: 8px 15px; font-size: 0.9em;">
+                        Подробнее
+                    </a>
+                    <a href="{% url 'manage_course_students' course.id %}" class="btn" style="padding: 8px 15px; font-size: 0.9em; background: #6c757d;">
+                        Управление
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">← На главную</a>
+        <a href="{% url 'profile' %}" class="btn">👤 Перейти в профиль</a>
+    </div>
+</div>
+{% endblock %}

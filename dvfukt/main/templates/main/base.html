@@ -4,24 +4,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Мой сайт{% endblock %}</title>
+    <title>{% block title %}Образовательная платформа FEFU{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .role-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .role-student { background: #28a745; color: white; }
+        .role-teacher { background: #007bff; color: white; }
+        .role-admin { background: #dc3545; color: white; }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .welcome-message {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
             <div class="navbar-nav">
-                <a href="{% url 'index' %}" class="nav-link">Главная</a>
-                <a href="{% url 'about' %}" class="nav-link">О нас</a>
-                <a href="{% url 'feedback' %}" class="nav-link">Обратная связь</a>
-                <a href="{% url 'register' %}" class="nav-link">Регистрация</a>
+                <a href="{% url 'index' %}" class="nav-link">🏠 Главная</a>
+                <a href="{% url 'course_list' %}" class="nav-link">📚 Курсы</a>
+                <a href="{% url 'about' %}" class="nav-link">ℹ️ О нас</a>
+                <a href="{% url 'feedback' %}" class="nav-link">📧 Обратная связь</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'student_list' %}" class="nav-link">👨‍🎓 Студенты</a>
+                    <a href="{% url 'instructor_list' %}" class="nav-link">👨‍🏫 Преподаватели</a>
+
+                    {% if user.student_profile.role == 'TEACHER' or user.student_profile.role == 'ADMIN' %}
+                        <a href="{% url 'teacher_dashboard' %}" class="nav-link">📊 Дашборд преподавателя</a>
+                    {% elif user.student_profile.role == 'STUDENT' %}
+                        <a href="{% url 'student_dashboard' %}" class="nav-link">📊 Мои курсы</a>
+                    {% endif %}
+
+                    <div class="nav-user">
+                        <span class="welcome-message">
+                            {% if user.student_profile.avatar %}
+                                <img src="{{ user.student_profile.avatar.url }}" alt="Аватар" class="avatar-small">
+                            {% endif %}
+                            {{ user.first_name|default:user.username }}
+                            <span class="role-badge role-{{ user.student_profile.role|lower }}">
+                                {{ user.student_profile.get_role_display }}
+                            </span>
+                        </span>
+
+                        <a href="{% url 'profile' %}" class="nav-link">👤 Профиль</a>
+                        {% if user.is_staff or user.student_profile.role == 'ADMIN' %}
+                            <a href="/admin/" class="nav-link">⚙️ Админка</a>
+                        {% endif %}
+                        <a href="{% url 'logout' %}" class="nav-link">🚪 Выйти</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">🔐 Вход</a>
+                    <a href="{% url 'register' %}" class="nav-link">👤 Регистрация</a>
+                {% endif %}
             </div>
         </div>
     </nav>
 
     <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </div>
+
+    <footer style="margin-top: 50px; padding: 20px; background: #343a40; color: white; text-align: center;">
+        <div class="container">
+            <p>© 2024 Образовательная платформа FEFU. Все права защищены.</p>
+            <p style="font-size: 0.9em; color: #adb5bd;">
+                Лабораторные работы по Django - Система аутентификации и авторизации
+            </p>
+        </div>
+    </footer>
 </body>
 </html>

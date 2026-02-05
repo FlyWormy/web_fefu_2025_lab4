@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Личный кабинет студента - FEFU Labs{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 30px;">
+        <h1>🎓 Личный кабинет студента</h1>
+        <p style="font-size: 1.1em;">Добро пожаловать, {{ user.get_full_name }}!</p>
+        <p style="color: #6c757d;">Здесь вы можете просматривать свои курсы и успеваемость</p>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6; margin-bottom: 30px;">
+        <h2>📊 Статистика</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2.5em; color: #007bff;">{{ enrollments|length }}</div>
+                <div style="font-weight: bold; color: #495057;">Всего курсов</div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2.5em; color: #28a745;">
+                    {{ enrollments|length|default:"0" }}
+                </div>
+                <div style="font-weight: bold; color: #495057;">Активных курсов</div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <div style="font-size: 2.5em; color: #17a2b8;">
+                    {% with completed=enrollments|length|default:"0" %}{{ completed }}{% endwith %}
+                </div>
+                <div style="font-weight: bold; color: #495057;">Завершено</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">📚 Мои курсы</h2>
+            <a href="{% url 'course_list' %}" class="btn">+ Записаться на курс</a>
+        </div>
+
+        {% if enrollments %}
+        <div style="margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Курс</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Преподаватель</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Дата записи</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Оценка</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'course_detail' enrollment.course.id %}" style="color: #007bff; text-decoration: none; font-weight: bold;">
+                                {{ enrollment.course.title }}
+                            </a>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.course.instructor.full_name }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.enrollment_date|date:"d.m.Y" }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; background: {% if enrollment.status == 'active' %}#28a745{% elif enrollment.status == 'completed' %}#007bff{% else %}#dc3545{% endif %}; color: white; font-size: 0.9em;">
+                                {{ enrollment.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {% if enrollment.grade %}
+                                <span style="font-weight: bold; font-size: 1.2em; color: #28a745;">{{ enrollment.grade }}</span>
+                            {% else %}
+                                <span style="color: #6c757d; font-style: italic;">Ожидает оценки</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'course_detail' enrollment.course.id %}" style="color: #007bff; text-decoration: none; font-size: 0.9em;">
+                                Подробнее →
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px;">
+            <p style="font-size: 1.2em; color: #6c757d; margin-bottom: 20px;">Вы еще не записаны ни на один курс</p>
+            <a href="{% url 'course_list' %}" class="btn">Посмотреть доступные курсы</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">← На главную</a>
+        <a href="{% url 'profile' %}" class="btn">👤 Перейти в профиль</a>
+    </div>
+</div>
+{% endblock %}

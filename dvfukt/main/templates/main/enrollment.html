@@ -1,0 +1,47 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Запись на курс{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>📝 Запись на курс</h1>
+    <p style="margin-bottom: 20px;">
+        Студент: <strong>{{ student.get_full_name }}</strong>
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label">{{ form.course.label }}</label>
+            {{ form.course }}
+
+            {% if form.course.errors %}
+            <div class="error-list">
+                {% for error in form.course.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="error-list" style="margin-bottom: 20px;">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button type="submit" class="btn">
+                Записаться
+            </button>
+            <a href="{% url 'student_profile' student.id %}" class="btn btn-secondary">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Курсы{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h1>🎓 Доступные курсы</h1>
+
+    {% if courses %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 30px;">
+            {% for course in courses %}
+            <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 10px; background: white;">
+                <h3>{{ course.title }}</h3>
+                <p style="color: #6c757d; margin: 10px 0;">
+                    Преподаватель: {{ course.instructor.full_name }}
+                </p>
+                <p>Продолжительность: {{ course.duration_hours }} часов</p>
+                <p style="margin: 15px 0;">{{ course.description|truncatewords:30 }}</p>
+                <div style="margin-top: 20px;">
+                    <a href="{% url 'course_detail' course.id %}" class="btn">
+                        Подробнее
+                    </a>
+                    <span style="margin-left: 10px; color: {% if course.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                        {{ course.is_active|yesno:"Активен,Не активен" }}
+                    </span>
+                    {% if user.is_authenticated %}
+                        {% if course.id in user_enrolled_courses %}
+                            <span style="margin-left: 10px; color: #28a745; font-weight: bold;">
+                                ✓ Вы записаны
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>На данный момент нет доступных курсов</p>
+    {% endif %}
+
+    <div style="margin-top: 40px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            На главную
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Мой профиль - FEFU Labs{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 30px; border-radius: 10px; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <div>
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Аватар" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background: #6c757d; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        {{ user.first_name|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div style="flex: 1;">
+                <h1 style="margin-top: 0;">{{ user.get_full_name }}</h1>
+                <p>
+                    <span style="background: {% if profile.role == 'ADMIN' %}#dc3545{% elif profile.role == 'TEACHER' %}#007bff{% else %}#28a745{% endif %}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9em;">
+                        {{ profile.get_role_display }}
+                    </span>
+                </p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                {% if profile.phone %}<p><strong>Телефон:</strong> {{ profile.phone }}</p>{% endif %}
+                {% if profile.faculty %}<p><strong>Факультет:</strong> {{ profile.get_faculty_display }}</p>{% endif %}
+                {% if profile.date_of_birth %}<p><strong>Дата рождения:</strong> {{ profile.date_of_birth }}</p>{% endif %}
+
+                <div style="margin-top: 20px;">
+                    <a href="{% url 'profile_edit' %}" class="btn">✏️ Редактировать профиль</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if profile.description %}
+    <div style="background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #dee2e6;">
+        <h3>📝 О себе</h3>
+        <p style="white-space: pre-line;">{{ profile.description }}</p>
+    </div>
+    {% endif %}
+
+    {% if profile.role == 'STUDENT' %}
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <h2>🎓 Мои курсы</h2>
+
+        {% if enrollments %}
+        <div style="margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Курс</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Преподаватель</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Дата записи</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Оценка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'course_detail' enrollment.course.id %}" style="color: #007bff; text-decoration: none;">
+                                {{ enrollment.course.title }}
+                            </a>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.course.instructor.full_name }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.enrollment_date|date:"d.m.Y" }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <span style="color: {% if enrollment.status == 'active' %}#28a745{% elif enrollment.status == 'completed' %}#007bff{% else %}#dc3545{% endif %};">
+                                {{ enrollment.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {% if enrollment.grade %}
+                                <strong style="font-size: 1.2em;">{{ enrollment.grade }}</strong>
+                            {% else %}
+                                <span style="color: #6c757d;">Нет оценки</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: #6c757d; margin-top: 15px;">Вы еще не записались ни на один курс.</p>
+        <a href="{% url 'course_list' %}" class="btn" style="margin-top: 10px;">Посмотреть доступные курсы</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if profile.role == 'TEACHER' or profile.role == 'ADMIN' %}
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6; margin-top: 20px;">
+        <h2>👨‍🏫 Мои курсы для преподавания</h2>
+
+        {% if taught_courses %}
+        <div style="margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Курс</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Студентов</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in taught_courses %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'course_detail' course.id %}" style="color: #007bff; text-decoration: none;">
+                                {{ course.title }}
+                            </a>
+                        </td>
+                        <td style="padding: 12px 15px; text-align: center;">
+                            {{ course.enrollments.count }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <span style="color: {% if course.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                                {{ course.is_active|yesno:"Активен,Не активен" }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'manage_course_students' course.id %}" class="btn" style="padding: 6px 12px; font-size: 0.9em;">
+                                Управление студентами
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: #6c757d; margin-top: 15px;">У вас пока нет курсов для преподавания.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">← На главную</a>
+        {% if profile.role == 'ADMIN' %}
+        <a href="{% url 'admin_dashboard' %}" class="btn">⚙️ Панель администратора</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

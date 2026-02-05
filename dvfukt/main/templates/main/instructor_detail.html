@@ -1,0 +1,93 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ instructor.first_name }} {{ instructor.last_name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+        <h1>👨‍🏫 {{ instructor.first_name }} {{ instructor.last_name }}</h1>
+        <p style="font-size: 1.1em; color: #6c757d;">
+            {{ instructor.specialization }}
+        </p>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <h3>📋 Информация о преподавателе</h3>
+        <div style="display: grid; gap: 15px; margin-top: 20px;">
+            <div>
+                <strong>Email:</strong><br>
+                {{ instructor.email }}
+            </div>
+            {% if instructor.degree %}
+            <div>
+                <strong>Ученая степень:</strong><br>
+                {{ instructor.degree }}
+            </div>
+            {% endif %}
+            <div>
+                <strong>Статус:</strong><br>
+                <span style="color: {% if instructor.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                    {{ instructor.is_active|yesno:"Активен,Не активен" }}
+                </span>
+            </div>
+            <div>
+                <strong>Зарегистрирован:</strong><br>
+                {{ instructor.created_at|date:"d.m.Y" }}
+            </div>
+        </div>
+
+        {% if instructor.courses.all %}
+        <div style="margin-top: 40px;">
+            <h4>📚 Ведет курсы</h4>
+            <div style="margin-top: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Курс</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Продолжительность</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in instructor.courses.all %}
+                        <tr style="border-bottom: 1px solid #dee2e6;">
+                            <td style="padding: 10px;">
+                                <a href="{% url 'course_detail' course.id %}" style="text-decoration: none; color: #007bff;">
+                                    {{ course.title }}
+                                </a>
+                            </td>
+                            <td style="padding: 10px;">
+                                {{ course.duration_hours }} часов
+                            </td>
+                            <td style="padding: 10px;">
+                                <span style="color: {% if course.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                                    {{ course.is_active|yesno:"Активен,Не активен" }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <p>Преподаватель пока не ведет курсы</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 15px;">
+        <a href="{% url 'instructor_edit' instructor.id %}" class="btn">
+            ✏️ Редактировать
+        </a>
+        <a href="{% url 'instructor_list' %}" class="btn btn-secondary">
+            ← Все преподаватели
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            На главную
+        </a>
+    </div>
+</div>
+{% endblock %}

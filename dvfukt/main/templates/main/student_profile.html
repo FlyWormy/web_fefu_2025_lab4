@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {% if error %}Ошибка{% else %}Студент {{ student_id }}{% endif %}
+    {% if error %}Ошибка{% else %}{{ student.get_full_name }}{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -15,45 +15,46 @@
         </p>
     </div>
 {% else %}
-    <div style="max-width: 600px; margin: 0 auto;">
+    <div style="max-width: 800px; margin: 0 auto;">
         <div class="student-card">
-            <h1>🎓 Профиль студента</h1>
-            <p style="font-size: 1.2em; color: #6c757d;">ID: {{ student_id }}</p>
+            <h1>🎓 {{ student.get_full_name }}</h1>
+            <p style="font-size: 1.1em; color: #6c757d;">
+                Факультет: {{ student.get_faculty_display }}
+                {% if student.date_of_birth %}
+                    | Дата рождения: {{ student.date_of_birth }}
+                {% endif %}
+            </p>
+            <p>Email: {{ student.email }}</p>
+            <p>Зарегистрирован: {{ student.created_at|date:"d.m.Y" }}</p>
         </div>
 
-        <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
-            <h3>Основная информация</h3>
-            <div style="display: grid; gap: 15px; margin-top: 20px;">
-                <div>
-                    <strong>Полное имя:</strong> Студент {{ student_id }}
+        <div style="margin-top: 30px;">
+            <h3>📚 Записи на курсы</h3>
+            {% if enrollments %}
+                <div style="display: grid; gap: 15px; margin-top: 20px;">
+                    {% for enrollment in enrollments %}
+                    <div style="border: 1px solid #dee2e6; padding: 15px; border-radius: 8px;">
+                        <h4>{{ enrollment.course.title }}</h4>
+                        <p>Преподаватель: {{ enrollment.course.teacher }}</p>
+                        <p>Статус: <span style="color: {% if enrollment.status == 'active' %}#28a745{% elif enrollment.status == 'completed' %}#007bff{% else %}#dc3545{% endif %};">
+                            {{ enrollment.get_status_display }}
+                        </span></p>
+                        <p>Дата записи: {{ enrollment.enrollment_date|date:"d.m.Y" }}</p>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div>
-                    <strong>Email:</strong> student{{ student_id }}@edu.ru
-                </div>
-                <div>
-                    <strong>Группа:</strong> ГР-{{ student_id|add:100 }}
-                </div>
-                <div>
-                    <strong>Курс:</strong> {{ student_id|divisibleby:"2"|yesno:"Первый,Второй" }}
-                </div>
-                <div>
-                    <strong>Статус:</strong> Активен
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top: 30px; display: flex; gap: 15px;">
-            {% if student_id > 1 %}
-                <a href="{% url 'student_profile' student_id=student_id|add:'-1' %}" class="btn btn-secondary">
-                    ← Предыдущий
-                </a>
+            {% else %}
+                <p>Студент не записан ни на один курс</p>
             {% endif %}
-            <a href="{% url 'student_profile' student_id=student_id|add:'1' %}" class="btn">
-                Следующий →
-            </a>
-            <a href="{% url 'index' %}" class="btn btn-secondary">
-                На главную
-            </a>
+
+            <div style="margin-top: 30px;">
+                <a href="{% url 'enrollment' student.id %}" class="btn">
+                    📝 Записаться на курс
+                </a>
+                <a href="{% url 'index' %}" class="btn btn-secondary">
+                    На главную
+                </a>
+            </div>
         </div>
     </div>
 {% endif %}

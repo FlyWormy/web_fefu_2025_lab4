@@ -1,0 +1,96 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+        <h1>{{ course.title }}</h1>
+        <p style="font-size: 1.2em; color: #6c757d;">
+            Преподаватель: {{ course.instructor.full_name }}
+        </p>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <h3>Описание курса</h3>
+        <p style="white-space: pre-line;">{{ course.description }}</p>
+
+        <div style="margin-top: 30px;">
+            <h4>📊 Информация о курсе</h4>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                <div>
+                    <strong>Продолжительность:</strong><br>
+                    {{ course.duration_hours }} часов
+                </div>
+                <div>
+                    <strong>Статус:</strong><br>
+                    <span style="color: {% if course.is_active %}#28a745{% else %}#dc3545{% endif %};">
+                        {{ course.is_active|yesno:"Активен,Не активен" }}
+                    </span>
+                </div>
+                <div>
+                    <strong>Создан:</strong><br>
+                    {{ course.created_at|date:"d.m.Y" }}
+                </div>
+                <div>
+                    <strong>Записей на курс:</strong><br>
+                    {{ enrollments|length }} студент{{ enrollments|length|pluralize:"ов" }}
+                </div>
+            </div>
+        </div>
+
+        {% if enrollments %}
+        <div style="margin-top: 40px;">
+            <h4>👨‍🎓 Студенты курса</h4>
+            <div style="margin-top: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Студент</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6;">Дата записи</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                        <tr style="border-bottom: 1px solid #dee2e6;">
+                            <td style="padding: 10px;">
+                                <a href="{% url 'student_profile' enrollment.student.student_profile.id %}" style="text-decoration: none; color: #007bff;">
+                                    {{ enrollment.student.student_profile.get_full_name }}
+                                </a>
+                            </td>
+                            <td style="padding: 10px;">
+                                <span style="color: {% if enrollment.status == 'active' %}#28a745{% elif enrollment.status == 'completed' %}#007bff{% else %}#dc3545{% endif %};">
+                                    {{ enrollment.get_status_display }}
+                                </span>
+                            </td>
+                            <td style="padding: 10px;">
+                                {{ enrollment.enrollment_date|date:"d.m.Y" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 15px;">
+        <a href="{% url 'course_list' %}" class="btn btn-secondary">
+            ← Все курсы
+        </a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            На главную
+        </a>
+        {% if user.is_authenticated and not user_enrolled %}
+            {% if user.student_profile.is_student %}
+                <a href="{% url 'enrollment_current' %}" class="btn">
+                    📝 Записаться на курс
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

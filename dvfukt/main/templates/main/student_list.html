@@ -1,0 +1,89 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Список студентов{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="margin-bottom: 30px;">
+        <h1>👨‍🎓 Список студентов</h1>
+        <p style="color: #6c757d;">
+            Для добавления студентов используйте форму регистрации или админку
+        </p>
+    </div>
+
+    {% if students %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                <thead>
+                    <tr style="background: #343a40; color: white;">
+                        <th style="padding: 12px 15px; text-align: left;">ФИО</th>
+                        <th style="padding: 12px 15px; text-align: left;">Email</th>
+                        <th style="padding: 12px 15px; text-align: left;">Факультет</th>
+                        <th style="padding: 12px 15px; text-align: left;">Дата регистрации</th>
+                        <th style="padding: 12px 15px; text-align: left;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px 15px;">
+                            <strong>{{ student.first_name }} {{ student.last_name }}</strong>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ student.email }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ student.get_faculty_display }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ student.created_at|date:"d.m.Y" }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <div style="display: flex; gap: 8px;">
+                                <a href="{% url 'student_profile' student.id %}"
+                                   style="padding: 5px 10px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                    Профиль
+                                </a>
+                                {% comment %}
+                                <!-- Ссылка на редактирование временно скрыта -->
+                                <!--
+                                <a href="{% url 'student_edit' student.id %}"
+                                   style="padding: 5px 10px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                    Редактировать
+                                </a>
+                                -->
+                                {% endcomment %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px; color: #6c757d;">
+            Всего студентов: {{ students|length }}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px;">
+            <p style="font-size: 1.2em;">Студенты не найдены</p>
+            <a href="{% url 'register' %}" class="btn" style="margin-top: 20px;">
+                Зарегистрировать студента
+            </a>
+            <p style="color: #6c757d; margin-top: 10px;">
+                или используйте <a href="/admin/">админку</a>
+            </p>
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 40px;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            ← На главную
+        </a>
+        <a href="{% url 'register' %}" class="btn" style="margin-left: 10px;">
+            📝 Регистрация нового студента
+        </a>
+    </div>
+</div>
+{% endblock %}

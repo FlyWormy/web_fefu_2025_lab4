@@ -1,0 +1,100 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Управление студентами - {{ course.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 30px;">
+        <h1>👨‍🎓 Управление студентами</h1>
+        <p style="font-size: 1.1em;">
+            Курс: <strong>{{ course.title }}</strong>
+        </p>
+        <p>Преподаватель: {{ course.instructor.full_name }}</p>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
+        <h2>📋 Список студентов</h2>
+
+        {% if enrollments %}
+        <div style="margin-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Студент</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Email</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Дата записи</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Статус</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Оценка</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #dee2e6;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px 15px;">
+                            <a href="{% url 'student_profile' enrollment.student.student_profile.id %}" style="color: #007bff; text-decoration: none;">
+                                {{ enrollment.student.student_profile.get_full_name }}
+                            </a>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.student.email }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            {{ enrollment.enrollment_date|date:"d.m.Y" }}
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <span style="color: {% if enrollment.status == 'active' %}#28a745{% elif enrollment.status == 'completed' %}#007bff{% else %}#dc3545{% endif %};">
+                                {{ enrollment.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="student_id" value="{{ enrollment.student.id }}">
+                                <input type="number" name="grade" value="{{ enrollment.grade|default:'' }}"
+                                       min="0" max="100" step="0.01"
+                                       style="width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                <button type="submit" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                    Сохранить
+                                </button>
+                            </form>
+                        </td>
+                        <td style="padding: 12px 15px;">
+                            <div style="display: flex; gap: 5px;">
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="change_status" value="active">
+                                    <input type="hidden" name="student_id" value="{{ enrollment.student.id }}">
+                                    <button type="submit" style="padding: 4px 8px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 0.8em; cursor: pointer;">
+                                        Активен
+                                    </button>
+                                </form>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="change_status" value="completed">
+                                    <input type="hidden" name="student_id" value="{{ enrollment.student.id }}">
+                                    <button type="submit" style="padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 0.8em; cursor: pointer;">
+                                        Завершен
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+            <p style="font-size: 1.2em; color: #6c757d;">На этот курс еще никто не записался</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 40px; display: flex; gap: 15px;">
+        <a href="{% url 'teacher_dashboard' %}" class="btn btn-secondary">← Назад к дашборду</a>
+        <a href="{% url 'course_detail' course.id %}" class="btn">📄 Подробнее о курсе</a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">🏠 На главную</a>
+    </div>
+</div>
+{% endblock %}

@@ -175,3 +175,85 @@ body {
 .w-100 {
     width: 100%;
 }
+
+/* Стили для сообщений */
+.messages {
+    margin: 20px 0;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+/* Футер */
+footer {
+    margin-top: auto;
+}
+
+/* Адаптивность навигации */
+@media (max-width: 768px) {
+    .navbar-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-link {
+        margin: 5px;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+}
+
+/* Стили для таблиц в шаблонах */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th {
+    background: #343a40;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+tr:hover {
+    background-color: #f8f9fa;
+}
