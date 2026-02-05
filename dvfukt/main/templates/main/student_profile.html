@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
     {% if error %}Ошибка{% else %}Студент {{ student_id }}{% endif %}
@@ -6,26 +7,25 @@
 
 {% block content %}
 {% if error %}
-    <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px; border: 1px solid #f5c6cb;">
+    <div style="background: #f8d7da; color: #721c24; padding: 20px; border-radius: 8px;">
         <h1>❌ Ошибка</h1>
         <p><strong>Сообщение:</strong> {{ error }}</p>
         <p style="margin-top: 15px;">
-            <a href="{% url 'index' %}" class="btn" style="background: #6c757d;">Вернуться на главную</a>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Вернуться на главную</a>
         </p>
     </div>
 {% else %}
     <div style="max-width: 600px; margin: 0 auto;">
-        <div style="background: #e9ecef; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+        <div class="student-card">
             <h1>🎓 Профиль студента</h1>
             <p style="font-size: 1.2em; color: #6c757d;">ID: {{ student_id }}</p>
         </div>
 
         <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #dee2e6;">
-            <h3>📋 Основная информация</h3>
+            <h3>Основная информация</h3>
             <div style="display: grid; gap: 15px; margin-top: 20px;">
                 <div>
-                    <strong>Полное имя:</strong> 
-                    <span id="studentName">Студент {{ student_id }}</span>
+                    <strong>Полное имя:</strong> Студент {{ student_id }}
                 </div>
                 <div>
                     <strong>Email:</strong> student{{ student_id }}@edu.ru
@@ -37,42 +37,23 @@
                     <strong>Курс:</strong> {{ student_id|divisibleby:"2"|yesno:"Первый,Второй" }}
                 </div>
                 <div>
-                    <strong>Статус:</strong> 
-                    <span style="color: #28a745;">● Активен</span>
+                    <strong>Статус:</strong> Активен
                 </div>
             </div>
         </div>
 
-        <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
             {% if student_id > 1 %}
-                <a href="{% url 'student_profile' student_id=student_id|add:'-1' %}" class="btn" style="background: #6c757d;">
-                    ← Предыдущий студент
+                <a href="{% url 'student_profile' student_id=student_id|add:'-1' %}" class="btn btn-secondary">
+                    ← Предыдущий
                 </a>
             {% endif %}
             <a href="{% url 'student_profile' student_id=student_id|add:'1' %}" class="btn">
-                Следующий студент →
+                Следующий →
             </a>
-            <a href="{% url 'index' %}" class="btn" style="background: #6c757d;">
+            <a href="{% url 'index' %}" class="btn btn-secondary">
                 На главную
             </a>
-        </div>
-
-        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            <h4>Быстрый переход:</h4>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-                <a href="{% url 'student_profile' student_id=1 %}" style="padding: 8px 15px; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #495057;">
-                    Студент 1
-                </a>
-                <a href="{% url 'student_profile' student_id=25 %}" style="padding: 8px 15px; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #495057;">
-                    Студент 25
-                </a>
-                <a href="{% url 'student_profile' student_id=50 %}" style="padding: 8px 15px; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #495057;">
-                    Студент 50
-                </a>
-                <a href="{% url 'student_profile' student_id=100 %}" style="padding: 8px 15px; background: #e9ecef; border-radius: 4px; text-decoration: none; color: #495057;">
-                    Студент 100
-                </a>
-            </div>
         </div>
     </div>
 {% endif %}

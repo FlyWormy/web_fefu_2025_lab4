@@ -1,44 +1,50 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
-<div style="text-align: center; padding: 40px 20px;">
-    <h1 style="color: #343a40; margin-bottom: 20px;">Добро пожаловать на наш сайт!</h1>
+<div class="text-center" style="padding: 40px 20px;">
+    <h1 style="color: #343a40; margin-bottom: 20px;">Добро пожаловать!</h1>
     <p style="font-size: 1.2em; color: #6c757d; max-width: 600px; margin: 0 auto 40px;">
-        Это образовательная платформа для студентов и преподавателей
+        Образовательная платформа для студентов
     </p>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px;">
-        <div style="border: 1px solid #dee2e6; padding: 30px; border-radius: 10px; text-align: center;">
-            <div style="font-size: 3em; margin-bottom: 15px;">👨‍🎓</div>
-            <h3>Студенты</h3>
-            <p>Просмотр профилей студентов</p>
-            <a href="{% url 'student_profile' student_id=1 %}" class="btn">Посмотреть пример</a>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div style="font-size: 2.5em; margin-bottom: 15px;">👨‍🎓</div>
+                <h3>Студенты</h3>
+                <p>Просмотр профилей студентов</p>
+                <a href="{% url 'student_profile' student_id=1 %}" class="btn">Посмотреть пример</a>
+            </div>
         </div>
 
-        <div style="border: 1px solid #dee2e6; padding: 30px; border-radius: 10px; text-align: center;">
-            <div style="font-size: 3em; margin-bottom: 15px;">📧</div>
-            <h3>Обратная связь</h3>
-            <p>Свяжитесь с нами через форму обратной связи</p>
-            <a href="{% url 'feedback' %}" class="btn">Перейти к форме</a>
+        <div class="col">
+            <div class="card">
+                <div style="font-size: 2.5em; margin-bottom: 15px;">📧</div>
+                <h3>Обратная связь</h3>
+                <p>Свяжитесь с нами</p>
+                <a href="{% url 'feedback' %}" class="btn">Перейти к форме</a>
+            </div>
         </div>
 
-        <div style="border: 1px solid #dee2e6; padding: 30px; border-radius: 10px; text-align: center;">
-            <div style="font-size: 3em; margin-bottom: 15px;">👤</div>
-            <h3>Регистрация</h3>
-            <p>Создайте новую учетную запись</p>
-            <a href="{% url 'register' %}" class="btn">Зарегистрироваться</a>
+        <div class="col">
+            <div class="card">
+                <div style="font-size: 2.5em; margin-bottom: 15px;">👤</div>
+                <h3>Регистрация</h3>
+                <p>Создайте учетную запись</p>
+                <a href="{% url 'register' %}" class="btn">Зарегистрироваться</a>
+            </div>
         </div>
     </div>
 
-    <div style="margin-top: 50px; padding: 30px; background: #f8f9fa; border-radius: 10px;">
-        <h2>🚀 Быстрый старт</h2>
-        <p>Начните знакомство с платформой:</p>
-        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
-            <a href="{% url 'about' %}" class="btn" style="background: #6c757d;">Узнать о нас</a>
+    <div style="margin-top: 50px;">
+        <h2>Быстрый старт</h2>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+            <a href="{% url 'about' %}" class="btn btn-secondary">Узнать о нас</a>
             <a href="{% url 'student_profile' student_id=1 %}" class="btn">Посмотреть студента</a>
-            <a href="{% url 'feedback' %}" class="btn" style="background: #28a745;">Связаться с нами</a>
+            <a href="{% url 'feedback' %}" class="btn btn-secondary">Связаться с нами</a>
         </div>
     </div>
 </div>

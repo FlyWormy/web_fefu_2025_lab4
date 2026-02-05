@@ -1,60 +1,63 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Регистрация{% endblock %}
 
 {% block content %}
-<h1>Регистрация пользователя</h1>
-<p>Создайте новую учетную запись</p>
+<div class="form-container">
+    <h1 class="text-center mb-4">👤 Регистрация</h1>
+    <p class="text-center mb-4">Создайте новую учетную запись</p>
 
-<form method="post">
-    {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
 
-    <div class="form-group">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-        {% if form.username.errors %}
+        <div class="form-group">
+            <label class="form-label">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <div class="error-list">
+                {{ form.username.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.email.label }}</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="error-list">
+                {{ form.email.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.password.label }}</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <div class="error-list">
+                {{ form.password.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ form.password_confirm.label }}</label>
+            {{ form.password_confirm }}
+            {% if form.password_confirm.errors %}
+            <div class="error-list">
+                {{ form.password_confirm.errors }}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
         <div class="error-list">
-            {{ form.username.errors }}
+            {{ form.non_field_errors }}
         </div>
         {% endif %}
-    </div>
 
-    <div class="form-group">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        {% if form.email.errors %}
-        <div class="error-list">
-            {{ form.email.errors }}
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="form-group">
-        {{ form.password.label_tag }}
-        {{ form.password }}
-        {% if form.password.errors %}
-        <div class="error-list">
-            {{ form.password.errors }}
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="form-group">
-        {{ form.password_confirm.label_tag }}
-        {{ form.password_confirm }}
-        {% if form.password_confirm.errors %}
-        <div class="error-list">
-            {{ form.password_confirm.errors }}
-        </div>
-        {% endif %}
-    </div>
-
-    {% if form.non_field_errors %}
-    <div class="error-list">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %}
-
-    <button type="submit" class="btn">Зарегистрироваться</button>
-</form>
+        <button type="submit" class="btn w-100">Зарегистрироваться</button>
+    </form>
+</div>
 {% endblock %}

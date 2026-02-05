@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.contrib import messages
+from django.http import Http404
 from django.contrib.auth.models import User
 from .forms import FeedbackForm, RegistrationForm
 
 
-# Существующие представления
 def index(request):
     return render(request, 'main/index.html')
 
@@ -24,20 +22,16 @@ def student_profile(request, student_id):
     })
 
 
-# Новые представления для форм
 def feedback_view(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
-            # Обработка данных формы
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-
-            # Здесь можно сохранить в базу или отправить email
-            messages.success(request, 'Спасибо за ваш отзыв! Мы свяжемся с вами в ближайшее время.')
-            return redirect('feedback')
+            request.session['form_data'] = {
+                'name': form.cleaned_data['name'],
+                'email': form.cleaned_data['email'],
+                'subject': form.cleaned_data['subject']
+            }
+            return redirect('success')
     else:
         form = FeedbackForm()
 
@@ -48,20 +42,27 @@ def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            # Создание пользователя
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            user = User.objects.create_user(
+            User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
 
-            messages.success(request, f'Пользователь {username} успешно зарегистрирован!')
-            return redirect('register')
+            request.session['form_data'] = {
+                'username': username,
+                'email': email
+            }
+            return redirect('success')
     else:
         form = RegistrationForm()
 
     return render(request, 'main/register.html', {'form': form})
+
+
+def success_view(request):
+    form_data = request.session.get('form_data', {})
+    return render(request, 'main/success.html', {'form_data': form_data})

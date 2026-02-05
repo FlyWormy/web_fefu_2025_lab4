@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Успешно{% endblock %}
+
+{% block content %}
+<div class="success-card">
+    <h1 class="text-center mb-4">✅ Успешно!</h1>
+
+    {% if form_data.name %}
+        <p class="mb-3">Спасибо, {{ form_data.name }}!</p>
+        <p class="mb-3">Ваше сообщение на тему "{{ form_data.subject }}" получено.</p>
+        <p>Мы свяжемся с вами по email: {{ form_data.email }}</p>
+    {% elif form_data.username %}
+        <p class="mb-3">Поздравляем, {{ form_data.username }}!</p>
+        <p class="mb-3">Ваша учетная запись успешно создана.</p>
+        <p>На ваш email {{ form_data.email }} отправлено письмо с подтверждением.</p>
+    {% else %}
+        <p class="mb-3">Действие успешно выполнено!</p>
+    {% endif %}
+
+    <div class="mt-5">
+        <a href="{% url 'index' %}" class="btn">На главную</a>
+        {% if form_data.name %}
+            <a href="{% url 'feedback' %}" class="btn btn-secondary">Новое сообщение</a>
+        {% elif form_data.username %}
+            <a href="{% url 'register' %}" class="btn btn-secondary">Новая регистрация</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

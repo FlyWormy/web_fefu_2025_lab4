@@ -1,28 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}О нас{% endblock %}
 
 {% block content %}
 <h1>О нас</h1>
-<p>Информация о нас</p>
+<p>Информация о нашей компании</p>
 
 <div style="margin-top: 30px;">
     <h2>Наша команда</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-            <h3>Иван Иванов</h3>
-            <p>Основатель компании</p>
-            <p>Опыт работы: 10 лет</p>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <h3>Иван Иванов</h3>
+                <p>Основатель компании</p>
+                <p>Опыт работы: 10 лет</p>
+            </div>
         </div>
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-            <h3>Мария Петрова</h3>
-            <p>Технический директор</p>
-            <p>Опыт работы: 8 лет</p>
+        <div class="col">
+            <div class="card">
+                <h3>Мария Петрова</h3>
+                <p>Технический директор</p>
+                <p>Опыт работы: 8 лет</p>
+            </div>
         </div>
-        <div style="border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-            <h3>Алексей Сидоров</h3>
-            <p>Разработчик</p>
-            <p>Опыт работы: 5 лет</p>
+        <div class="col">
+            <div class="card">
+                <h3>Алексей Сидоров</h3>
+                <p>Разработчик</p>
+                <p>Опыт работы: 5 лет</p>
+            </div>
         </div>
     </div>
 </div>
